@@ -1,66 +1,88 @@
-# Hello Add — Nginx reverse proxy (copy and edit hostnames + SSL paths)
+# Hello Add — Nginx (SSL only, same pattern as multi-sites.conf)
 #
-# 1. Copy:   sudo cp deploy/nginx/helloadd.conf.example /etc/nginx/sites-available/helloadd
-# 2. Edit:   replace example.com, app.example.com, and SSL paths (or use Certbot below)
-# 3. Enable: sudo ln -sf /etc/nginx/sites-available/helloadd /etc/nginx/sites-enabled/
-# 4. Test:   sudo nginx -t && sudo systemctl reload nginx
+# Replace DOMAIN below (helloadd.com) with your real domain, or paste this block into
+# /etc/nginx/sites-enabled/multi-sites.conf
 #
-# PM2 defaults (ecosystem.config.cjs): dashboard 127.0.0.1:3001, marketing web :30002
+# Issue one cert for all names (example):
+#   sudo certbot certonly --nginx -d helloadd.com -d www.helloadd.com -d app.helloadd.com
 #
-# HTTPS with Let's Encrypt (after HTTP works):
-#   sudo apt install certbot python3-certbot-nginx
-#   sudo certbot --nginx -d example.com -d www.example.com -d app.example.com
+# PM2: marketing web 127.0.0.1:30002, dashboard 127.0.0.1:3001
+# Set NEXT_PUBLIC_MARKETING_URL / NEXT_PUBLIC_DASHBOARD_URL to these https URLs.
+#
+#   sudo nginx -t && sudo systemctl reload nginx
 
-# ---- Redirect bare HTTP to HTTPS (uncomment after SSL is configured) ----
-# server {
-#     listen 80;
-#     listen [::]:80;
-#     server_name example.com www.example.com app.example.com;
-#     return 301 https://$host$request_uri;
-# }
+##############################################
+# HELLO ADD — marketing site (apps/web)
+##############################################
 
-# ---- Marketing site (apps/web) ----
 server {
     listen 80;
-    listen [::]:80;
-    server_name example.com www.example.com;
+    server_name helloadd.com www.helloadd.com;
+    return 301 https://$host$request_uri;
+}
 
-    # After Certbot, add ssl_certificate lines here or let certbot patch this file.
+server {
+    listen 443 ssl;
+    server_name helloadd.com www.helloadd.com;
+
+    ssl_certificate /etc/letsencrypt/live/helloadd.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/helloadd.com/privkey.pem;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
 
     client_max_body_size 25m;
 
     location / {
         proxy_pass http://127.0.0.1:30002;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
+
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
         proxy_read_timeout 86400;
     }
 }
 
-# ---- Dashboard app (apps/dashboard) ----
+##############################################
+# HELLO ADD — dashboard (apps/dashboard)
+##############################################
+
 server {
     listen 80;
-    listen [::]:80;
-    server_name app.example.com;
+    server_name app.helloadd.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name app.helloadd.com;
+
+    ssl_certificate /etc/letsencrypt/live/helloadd.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/helloadd.com/privkey.pem;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
 
     client_max_body_size 25m;
 
     location / {
         proxy_pass http://127.0.0.1:3001;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
+
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
         proxy_read_timeout 86400;
     }
 }
