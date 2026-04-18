@@ -14,6 +14,21 @@ function copyDir(src, dest) {
   return true;
 }
 
+/** Next standalone `cwd` is this folder; it only auto-loads `.env*` from here, not from `apps/<app>/`. */
+function copyEnvProduction(appDir, standaloneApp, appRelative) {
+  const src = path.join(appDir, ".env.production");
+  const dest = path.join(standaloneApp, ".env.production");
+  if (!fs.existsSync(src)) {
+    console.warn(
+      `[prepare-standalone] ${appRelative}: no ${path.join("apps", appRelative, ".env.production")} — set secrets in that file (or PM2 env) before production.`,
+    );
+    return;
+  }
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.copyFileSync(src, dest);
+  console.log(`[prepare-standalone] ${appRelative}: copied .env.production → standalone (for MONGODB_URI etc.)`);
+}
+
 function prepareApp(appRelative) {
   const root = path.join(__dirname, "..");
   const appDir = path.join(root, "apps", appRelative);
@@ -38,6 +53,8 @@ function prepareApp(appRelative) {
   if (copyDir(publicSrc, publicDest)) {
     console.log(`[prepare-standalone] ${appRelative}: copied public → standalone`);
   }
+
+  copyEnvProduction(appDir, standaloneApp, appRelative);
 }
 
 prepareApp("dashboard");

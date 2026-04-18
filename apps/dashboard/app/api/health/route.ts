@@ -31,7 +31,9 @@ export async function GET() {
     );
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    const showDetail = process.env.NODE_ENV === "development";
+    console.error("[api/health] MongoDB unavailable:", msg);
+    const showDetail =
+      process.env.NODE_ENV === "development" || process.env.HEALTH_DEBUG === "1";
     return NextResponse.json(
       {
         ok: false,

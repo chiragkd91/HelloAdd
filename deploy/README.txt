@@ -38,8 +38,12 @@ Build on your dev machine (or CI), then copy artifacts to the server.
    cd /opt/helloadd
    npm ci --omit=dev
    export HELLOADD_ROOT=/opt/helloadd
-   Set production env: copy apps/dashboard/.env.production or use systemd/PM2 env
-   (MONGODB_URI, OAuth keys, NEXT_PUBLIC_* URLs, etc.).
+   Set production env in apps/dashboard/.env.production (MONGODB_URI, OAuth, NEXT_PUBLIC_*).
+   Run npm run build:deploy so prepare-standalone copies .env.production into the standalone
+   bundle next to server.js — PM2 cwd alone does not read apps/dashboard/.env.production.
+   If you already built without that file, copy by hand:
+   cp apps/dashboard/.env.production apps/dashboard/.next/standalone/apps/dashboard/
+   Temporary API error detail: set HEALTH_DEBUG=1 in PM2 env, restart, hit /api/health, then remove.
    Use database name helloadd in the URI path (…/helloadd?authSource=…). First-time DB:
    from repo root with MONGODB_URI set: npm run db:ensure
 
