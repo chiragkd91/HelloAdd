@@ -1,0 +1,82 @@
+Hello Add — Production URLs & where to set them
+===============================================
+(Example hostnames: marketing helloadd.online / dashboard app.helloadd.online — replace with yours.)
+
+1) Public HTTPS origins (must match what users type in the browser)
+--------------------------------------------------------------------
+- Marketing / register / login pages:  https://helloadd.online  (and optionally https://www.helloadd.online)
+- Dashboard app:                       https://app.helloadd.online
+
+Important: If users hit www vs non-www, pick one canonical site for registration and set
+NEXT_PUBLIC_MARKETING_URL to that exact origin (scheme + host, no path, no trailing slash).
+
+
+2) Environment files (repo paths — on server usually under /opt/helloadd/)
+---------------------------------------------------------------------------
+
+A) apps/dashboard/.env.production
+   - MONGODB_URI
+       MongoDB connection string. Database name in path should be helloadd, e.g.
+       .../helloadd?authSource=admin
+   - NEXT_PUBLIC_DASHBOARD_URL
+       https://app.helloadd.online
+   - NEXT_PUBLIC_MARKETING_URL
+       https://helloadd.online   (must match Origin of the marketing site for CORS on register/login)
+   - Other secrets as needed (OAuth, email, RAZORPAY, CLIENT_PORTAL_SECRET, etc.) — see helloadd/.env.example
+
+B) apps/web/.env.production
+   - NEXT_PUBLIC_DASHBOARD_URL
+       https://app.helloadd.online   (where fetch() sends /api/auth/* from the marketing site)
+   - NEXT_PUBLIC_MARKETING_URL
+       Same canonical marketing URL as dashboard (used for links/copy)
+
+NEXT_PUBLIC_* values are inlined at "next build" time. After changing them, run a full dashboard + web
+build (e.g. npm run build:deploy from repo root), then restart PM2.
+
+
+3) Standalone copies (PM2 runs server.js from here — Next loads .env.production next to server.js)
+-------------------------------------------------------------------------------------------------
+After build + prepare-standalone, copy or rely on scripts/prepare-standalone.cjs to copy:
+
+- apps/dashboard/.next/standalone/apps/dashboard/.env.production
+- apps/web/.next/standalone/apps/web/.env.production
+
+Keep these in sync with the source files in apps/dashboard/ and apps/web/ when you edit secrets or URLs.
+
+
+4) PM2 — deploy/ecosystem.config.cjs
+--------------------------------------
+- HELLOADD_ROOT (environment variable when starting PM2): repo root, e.g. /opt/helloadd
+- PORT: DASHBOARD_PORT / WEB_PORT default to 3001 and 30002 in the file (override via env)
+- Optional: set MONGODB_URI here only if you do not use .env.production in standalone (prefer one source of truth)
+
+
+5) Nginx — not in repo; example template: deploy/nginx/helloadd.conf.example
+-----------------------------------------------------------------------------
+On the server, files typically live under /etc/nginx/sites-available/ or a shared multi-sites.conf.
+
+- server_name for marketing: helloadd.online www.helloadd.online  → proxy_pass 127.0.0.1:30002
+- server_name for dashboard: app.helloadd.online                  → proxy_pass 127.0.0.1:3001
+- SSL certificate paths (e.g. /etc/letsencrypt/live/helloadd.online/...)
+
+After DNS points A/AAAA records to the server, reload nginx: sudo nginx -t && sudo systemctl reload nginx
+
+
+6) Code reference (defaults when env is missing — dev only)
+-----------------------------------------------------------
+- apps/web/lib/dashboardApi.ts          NEXT_PUBLIC_DASHBOARD_URL → else http://localhost:3001
+- apps/dashboard/lib/api/cors.ts        NEXT_PUBLIC_MARKETING_URL → else http://localhost:30002
+- apps/dashboard/lib/auth/dashboardBaseUrl.ts   NEXT_PUBLIC_DASHBOARD_URL for server-side links
+
+
+7) Verify after deploy
+------------------------
+- curl https://app.helloadd.online/api/health   → {"ok":true,"database":"helloadd",...}
+- Browser DevTools → Network on Register: request URL must be https://app.helloadd.online/api/auth/register
+  (not localhost)
+
+
+8) Related repo docs
+--------------------
+- deploy/README.txt           — PM2, build:deploy, standalone
+- helloadd/.env.example       — full variable list (copy never commit real secrets)

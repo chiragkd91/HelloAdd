@@ -1,6 +1,8 @@
 Hello Add — Linux deploy (PM2 + Next.js standalone)
 ==================================================
 
+Production URLs & env file checklist: deploy/PRODUCTION-URLS.txt
+
 Next.js version note
 --------------------
 `next.config.js` in `apps/web` and `apps/dashboard` detects the installed Next.js major
