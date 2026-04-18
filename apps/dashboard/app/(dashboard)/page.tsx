@@ -1,28 +1,11 @@
 import { AIChatPanel } from "@/components/ai/AIChatPanel";
 import { AIInsightsCard } from "@/components/dashboard/AIInsightsCard";
 import { CampaignTable } from "@/components/dashboard/CampaignTable";
-import { ChartCardSkeleton } from "@/components/dashboard/ChartCardSkeleton";
 import { ErrorPanel } from "@/components/dashboard/ErrorPanel";
 import { KPIGrid } from "@/components/dashboard/KPIGrid";
 import { HashtagPulse } from "@/components/dashboard/HashtagPulse";
 import { MarketPulse } from "@/components/dashboard/MarketPulse";
-import { RegionPerformance } from "@/components/dashboard/RegionPerformance";
-import dynamic from "next/dynamic";
-
-const SpendChart = dynamic(
-  () => import("@/components/dashboard/SpendChart").then((m) => m.SpendChart),
-  { ssr: false, loading: () => <ChartCardSkeleton /> }
-);
-
-const CTRChart = dynamic(
-  () => import("@/components/dashboard/CTRChart").then((m) => m.CTRChart),
-  { ssr: false, loading: () => <ChartCardSkeleton /> }
-);
-
-const EngagementDonut = dynamic(
-  () => import("@/components/dashboard/EngagementDonut").then((m) => m.EngagementDonut),
-  { ssr: false, loading: () => <ChartCardSkeleton tall={false} /> }
-);
+import { OverviewChartsSection } from "@/components/dashboard/OverviewChartsSection";
 
 export default function OverviewPage() {
   return (
@@ -43,14 +26,7 @@ export default function OverviewPage() {
           <MarketPulse compact itemLimit={8} />
         </div>
       </div>
-      <div className="grid gap-6 lg:grid-cols-2">
-        <SpendChart />
-        <CTRChart />
-      </div>
-      <div className="grid gap-6 lg:grid-cols-2">
-        <RegionPerformance />
-        <EngagementDonut />
-      </div>
+      <OverviewChartsSection />
       <CampaignTable />
       <ErrorPanel />
       <AIChatPanel />
