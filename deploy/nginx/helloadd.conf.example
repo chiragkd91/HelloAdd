@@ -1,10 +1,9 @@
 # Hello Add — Nginx (SSL only, same pattern as multi-sites.conf)
 #
-# Replace DOMAIN below (helloadd.com) with your real domain, or paste this block into
-# /etc/nginx/sites-enabled/multi-sites.conf
+# Production domain: helloadd.online (paste into multi-sites.conf or sites-enabled as needed)
 #
-# Issue one cert for all names (example):
-#   sudo certbot certonly --nginx -d helloadd.com -d www.helloadd.com -d app.helloadd.com
+# Issue one cert for all names:
+#   sudo certbot certonly --nginx -d helloadd.online -d www.helloadd.online -d app.helloadd.online
 #
 # PM2: marketing web 127.0.0.1:30002, dashboard 127.0.0.1:3001
 # Set NEXT_PUBLIC_MARKETING_URL / NEXT_PUBLIC_DASHBOARD_URL to these https URLs.
@@ -17,16 +16,16 @@
 
 server {
     listen 80;
-    server_name helloadd.com www.helloadd.com;
+    server_name helloadd.online www.helloadd.online;
     return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl;
-    server_name helloadd.com www.helloadd.com;
+    server_name helloadd.online www.helloadd.online;
 
-    ssl_certificate /etc/letsencrypt/live/helloadd.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/helloadd.com/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/helloadd.online/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/helloadd.online/privkey.pem;
 
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_prefer_server_ciphers on;
@@ -55,16 +54,16 @@ server {
 
 server {
     listen 80;
-    server_name app.helloadd.com;
+    server_name app.helloadd.online;
     return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl;
-    server_name app.helloadd.com;
+    server_name app.helloadd.online;
 
-    ssl_certificate /etc/letsencrypt/live/helloadd.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/helloadd.com/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/helloadd.online/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/helloadd.online/privkey.pem;
 
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_prefer_server_ciphers on;
