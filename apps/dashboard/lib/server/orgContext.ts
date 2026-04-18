@@ -21,7 +21,7 @@ export async function getSessionOrgContext(): Promise<SessionOrgContext | null> 
     return null;
   }
 
-  const token = cookies().get("session")?.value;
+  const token = (await cookies()).get("session")?.value;
   if (!token) return null;
 
   const session = await Session.findOne({ token, expiresAt: { $gt: new Date() } }).lean();

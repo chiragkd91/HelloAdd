@@ -10,7 +10,7 @@ function onboardingException(pathname: string): boolean {
 }
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const pathname = headers().get("x-pathname") ?? "";
+  const pathname = (await headers()).get("x-pathname") ?? "";
   const ctx = await getSessionOrgContext();
 
   if (pathname.startsWith("/onboarding")) {
