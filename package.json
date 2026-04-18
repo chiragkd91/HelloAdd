@@ -13,6 +13,7 @@
     "dev:web": "npm run dev --workspace=web",
     "dev:dashboard": "npm run dev --workspace=dashboard",
     "lint": "turbo lint",
+    "db:ensure": "npm run db:ensure --workspace=@helloadd/database",
     "db:seed": "npm run db:seed --workspace=@helloadd/database",
     "db:seed:demo-year": "npm run db:seed:demo-year --workspace=@helloadd/database"
   },

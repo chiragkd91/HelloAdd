@@ -10,6 +10,7 @@
     "./agency-plan-types": "./src/agencyPlanTypes.ts"
   },
   "scripts": {
+    "db:ensure": "tsx scripts/ensure-database.ts",
     "db:seed": "tsx scripts/seed.ts",
     "db:seed:demo-year": "cross-env SEED_DEMO_YEAR=1 tsx scripts/seed.ts"
   },

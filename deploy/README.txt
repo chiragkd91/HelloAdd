@@ -40,6 +40,8 @@ Build on your dev machine (or CI), then copy artifacts to the server.
    export HELLOADD_ROOT=/opt/helloadd
    Set production env: copy apps/dashboard/.env.production or use systemd/PM2 env
    (MONGODB_URI, OAuth keys, NEXT_PUBLIC_* URLs, etc.).
+   Use database name helloadd in the URI path (…/helloadd?authSource=…). First-time DB:
+   from repo root with MONGODB_URI set: npm run db:ensure
 
    pm2 start deploy/ecosystem.config.cjs
    pm2 save
