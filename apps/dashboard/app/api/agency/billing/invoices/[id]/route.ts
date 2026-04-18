@@ -4,8 +4,9 @@ import { z } from "zod";
 import { requireAgencyManager } from "@/lib/api/agencyGuard";
 import { jsonError, jsonOk } from "@/lib/api/http";
 import { requireRole } from "@/lib/auth/rbac";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
-type Ctx = { params: { id: string } };
+type Ctx = AppRouteCtx<{ id: string }>;
 
 const patchSchema = z
   .object({
@@ -21,7 +22,7 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
     return jsonError("Only owners can update invoice status", 403);
   }
 
-  const invoiceId = ctx.params.id;
+  const { id: invoiceId } = await ctx.params;
   if (!invoiceId) return jsonError("Missing id", 400);
 
   let json: unknown;

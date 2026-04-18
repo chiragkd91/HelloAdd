@@ -5,8 +5,9 @@ import { loadAgencyInvoiceForAgency, toInvoicePdfInput } from "@/lib/agency/invo
 import { buildAgencyInvoicePdfBytes } from "@/lib/agency/invoicePdf";
 import { requireRole } from "@/lib/auth/rbac";
 import { sendAgencyInvoiceEmail } from "@/lib/email/sendAgencyInvoiceEmail";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
-type Ctx = { params: { id: string } };
+type Ctx = AppRouteCtx<{ id: string }>;
 
 function safeFilename(n: string): string {
   return `${n.replace(/[^a-zA-Z0-9._-]+/g, "-").slice(0, 80) || "invoice"}.pdf`;
@@ -19,7 +20,7 @@ export async function POST(_req: NextRequest, ctx: Ctx) {
     return jsonError("Only owners can send agency invoices", 403);
   }
 
-  const invoiceId = ctx.params.id;
+  const { id: invoiceId } = await ctx.params;
   if (!invoiceId) return jsonError("Missing id", 400);
 
   const loaded = await loadAgencyInvoiceForAgency(auth.organizationId, invoiceId);

@@ -4,15 +4,17 @@ import { jsonError, jsonOk } from "@/lib/api/http";
 import { requireUserOrgRole } from "@/lib/auth/rbac";
 import { refreshPostEngagement } from "@/lib/scheduler/postEngagement";
 import { serializeScheduledPost } from "@/lib/scheduler/serializeScheduledPost";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
-type Ctx = { params: { id: string } };
+type Ctx = AppRouteCtx<{ id: string }>;
 
 export async function POST(req: NextRequest, ctx: Ctx) {
   const auth = await requireUserOrgRole(req, "MANAGER");
   if (!auth.ok) return auth.response;
 
+  const { id: postId } = await ctx.params;
   try {
-    await refreshPostEngagement(ctx.params.id, auth.organizationId);
+    await refreshPostEngagement(postId, auth.organizationId);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     if (msg === "POST_NOT_FOUND") {
@@ -23,7 +25,7 @@ export async function POST(req: NextRequest, ctx: Ctx) {
   }
 
   const post = await ScheduledPost.findOne({
-    _id: ctx.params.id,
+    _id: postId,
     organizationId: auth.organizationId,
   }).lean();
   if (!post) {

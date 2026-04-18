@@ -12,8 +12,9 @@ import { z } from "zod";
 import { aggregateCampaignMetrics, countCampaignsByStatus } from "@/lib/agency/clientMetrics";
 import { requireAgencyManager } from "@/lib/api/agencyGuard";
 import { jsonError, jsonOk } from "@/lib/api/http";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
-type Ctx = { params: { id: string } };
+type Ctx = AppRouteCtx<{ id: string }>;
 
 const patchSchema = z
   .object({
@@ -56,7 +57,7 @@ export async function GET(req: NextRequest, ctx: Ctx) {
   const auth = await requireAgencyManager(req);
   if (!auth.ok) return auth.response;
 
-  const clientOrgId = ctx.params.id;
+  const { id: clientOrgId } = await ctx.params;
   if (!clientOrgId) {
     return jsonError("Missing client id", 400);
   }
@@ -145,7 +146,7 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
   const auth = await requireAgencyManager(req);
   if (!auth.ok) return auth.response;
 
-  const clientOrgId = ctx.params.id;
+  const { id: clientOrgId } = await ctx.params;
   if (!clientOrgId) {
     return jsonError("Missing client id", 400);
   }

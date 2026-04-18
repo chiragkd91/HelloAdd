@@ -5,16 +5,17 @@ import { parseOAuthNextParam } from "@/lib/api/oauth-redirect";
 import { encodeState } from "@/lib/api/oauth-stub";
 import { loadAgencyClient } from "@/lib/api/agencyClientAccess";
 import { requireAgencyManager } from "@/lib/api/agencyGuard";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
 const ADWORDS_SCOPE = "https://www.googleapis.com/auth/adwords";
 
-type Ctx = { params: { id: string } };
+type Ctx = AppRouteCtx<{ id: string }>;
 
 export async function GET(req: NextRequest, ctx: Ctx) {
   const auth = await requireAgencyManager(req);
   if (!auth.ok) return auth.response;
 
-  const clientOrgId = ctx.params.id;
+  const { id: clientOrgId } = await ctx.params;
   if (!clientOrgId) {
     return NextResponse.json({ error: "Missing client id" }, { status: 400 });
   }

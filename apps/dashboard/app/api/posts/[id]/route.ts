@@ -12,6 +12,7 @@ import { jsonError, jsonOk } from "@/lib/api/http";
 import { requireUserAndOrg } from "@/lib/api/guard";
 import { requireUserOrgRole } from "@/lib/auth/rbac";
 import { serializeScheduledPost } from "@/lib/scheduler/serializeScheduledPost";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
 const statusEnum = z.enum(ScheduledPostStatusValues as unknown as [string, ...string[]]);
 const platformEnum = z.enum(PlatformValues as unknown as [string, ...string[]]);
@@ -37,14 +38,15 @@ const updateSchema = z
   })
   .strict();
 
-type Ctx = { params: { id: string } };
+type Ctx = AppRouteCtx<{ id: string }>;
 
 export async function GET(req: NextRequest, ctx: Ctx) {
   const auth = await requireUserAndOrg(req);
   if (!auth.ok) return auth.response;
 
+  const { id: postId } = await ctx.params;
   const post = await ScheduledPost.findOne({
-    _id: ctx.params.id,
+    _id: postId,
     organizationId: auth.organizationId,
   }).lean();
   if (!post) {
@@ -57,6 +59,7 @@ export async function PUT(req: NextRequest, ctx: Ctx) {
   const auth = await requireUserOrgRole(req, "MANAGER");
   if (!auth.ok) return auth.response;
 
+  const { id: postId } = await ctx.params;
   let json: unknown;
   try {
     json = await req.json();
@@ -69,7 +72,7 @@ export async function PUT(req: NextRequest, ctx: Ctx) {
   }
 
   const existing = await ScheduledPost.findOne({
-    _id: ctx.params.id,
+    _id: postId,
     organizationId: auth.organizationId,
   });
   if (!existing) {
@@ -115,8 +118,9 @@ export async function DELETE(req: NextRequest, ctx: Ctx) {
   const auth = await requireUserOrgRole(req, "MANAGER");
   if (!auth.ok) return auth.response;
 
+  const { id: postId } = await ctx.params;
   const post = await ScheduledPost.findOne({
-    _id: ctx.params.id,
+    _id: postId,
     organizationId: auth.organizationId,
   }).lean();
   if (!post) {
@@ -126,6 +130,6 @@ export async function DELETE(req: NextRequest, ctx: Ctx) {
     return jsonError("Published posts cannot be deleted", 400);
   }
 
-  await ScheduledPost.deleteOne({ _id: ctx.params.id, organizationId: auth.organizationId });
+  await ScheduledPost.deleteOne({ _id: postId, organizationId: auth.organizationId });
   return jsonOk({ ok: true });
 }

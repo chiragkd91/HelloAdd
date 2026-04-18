@@ -3,14 +3,15 @@ import { NextRequest } from "next/server";
 import { requireAgencyManager } from "@/lib/api/agencyGuard";
 import { jsonError, jsonOk } from "@/lib/api/http";
 import { signClientPortalToken } from "@/lib/clientPortal/token";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
-type Ctx = { params: { id: string } };
+type Ctx = AppRouteCtx<{ id: string }>;
 
 export async function POST(req: NextRequest, ctx: Ctx) {
   const auth = await requireAgencyManager(req);
   if (!auth.ok) return auth.response;
 
-  const clientOrgId = ctx.params.id;
+  const { id: clientOrgId } = await ctx.params;
   if (!clientOrgId) {
     return jsonError("Missing client id", 400);
   }

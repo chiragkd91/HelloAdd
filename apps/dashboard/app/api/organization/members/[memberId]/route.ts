@@ -5,8 +5,9 @@ import {
 import { NextRequest } from "next/server";
 import { jsonDbUnavailable, jsonError, jsonOk } from "@/lib/api/http";
 import { requireUserOrgRole } from "@/lib/auth/rbac";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
-type Ctx = { params: { memberId: string } };
+type Ctx = AppRouteCtx<{ memberId: string }>;
 
 /**
  * Remove a member from the workspace. OWNER rows cannot be removed here.
@@ -16,7 +17,8 @@ export async function DELETE(req: NextRequest, ctx: Ctx) {
   const auth = await requireUserOrgRole(req, "ADMIN");
   if (!auth.ok) return auth.response;
 
-  const memberId = ctx.params.memberId?.trim();
+  const { memberId: rawMemberId } = await ctx.params;
+  const memberId = rawMemberId?.trim();
   if (!memberId) {
     return jsonError("Missing member id", 400);
   }

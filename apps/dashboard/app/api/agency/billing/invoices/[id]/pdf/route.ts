@@ -4,8 +4,9 @@ import { buildAgencyInvoicePdfBytes } from "@/lib/agency/invoicePdf";
 import { requireAgencyManager } from "@/lib/api/agencyGuard";
 import { jsonError } from "@/lib/api/http";
 import { requireRole } from "@/lib/auth/rbac";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
-type Ctx = { params: { id: string } };
+type Ctx = AppRouteCtx<{ id: string }>;
 
 function safeFilename(n: string): string {
   return n.replace(/[^a-zA-Z0-9._-]+/g, "-").slice(0, 80) || "invoice";
@@ -18,7 +19,7 @@ export async function GET(_req: NextRequest, ctx: Ctx) {
     return jsonError("Only owners can download agency invoice PDFs", 403);
   }
 
-  const invoiceId = ctx.params.id;
+  const { id: invoiceId } = await ctx.params;
   if (!invoiceId) return jsonError("Missing id", 400);
 
   const loaded = await loadAgencyInvoiceForAgency(auth.organizationId, invoiceId);

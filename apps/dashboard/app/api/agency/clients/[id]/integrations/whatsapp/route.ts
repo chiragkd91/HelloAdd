@@ -9,8 +9,9 @@ import { enforceAgencyWhatsAppConnect } from "@/lib/agency/agencyPlanEnforcement
 import { loadAgencyClient } from "@/lib/api/agencyClientAccess";
 import { requireAgencyManager } from "@/lib/api/agencyGuard";
 import { jsonDbUnavailable, jsonError, jsonOk } from "@/lib/api/http";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
-type Ctx = { params: { id: string } };
+type Ctx = AppRouteCtx<{ id: string }>;
 
 const connectSchema = z.object({
   phoneNumberId: z.string().min(8, "Phone Number ID is required"),
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest, ctx: Ctx) {
   const auth = await requireAgencyManager(req);
   if (!auth.ok) return auth.response;
 
-  const clientOrgId = ctx.params.id;
+  const { id: clientOrgId } = await ctx.params;
   if (!clientOrgId) return jsonError("Missing client id", 400);
 
   const bundle = await loadAgencyClient(auth.organizationId, clientOrgId);
@@ -98,7 +99,7 @@ export async function DELETE(_req: NextRequest, ctx: Ctx) {
   const auth = await requireAgencyManager(_req);
   if (!auth.ok) return auth.response;
 
-  const clientOrgId = ctx.params.id;
+  const { id: clientOrgId } = await ctx.params;
   if (!clientOrgId) return jsonError("Missing client id", 400);
 
   const bundle = await loadAgencyClient(auth.organizationId, clientOrgId);

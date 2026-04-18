@@ -2,15 +2,16 @@ import { Integration, connectMongo } from "@helloadd/database";
 import { NextRequest } from "next/server";
 import { jsonDbUnavailable, jsonError, jsonOk } from "@/lib/api/http";
 import { requireUserOrgRole } from "@/lib/auth/rbac";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
-type Ctx = { params: { integrationId: string } };
+type Ctx = AppRouteCtx<{ integrationId: string }>;
 
 /** Remove a connected integration for the current workspace. */
 export async function DELETE(req: NextRequest, ctx: Ctx) {
   const auth = await requireUserOrgRole(req, "MANAGER");
   if (!auth.ok) return auth.response;
 
-  const integrationId = ctx.params.integrationId;
+  const { integrationId } = await ctx.params;
   if (!integrationId) return jsonError("Missing integration id", 400);
 
   try {

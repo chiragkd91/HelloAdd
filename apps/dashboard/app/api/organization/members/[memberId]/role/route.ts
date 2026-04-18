@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { jsonDbUnavailable, jsonError, jsonOk } from "@/lib/api/http";
 import { requireUserOrgRole } from "@/lib/auth/rbac";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
 const assignableRoles = ["ADMIN", "MANAGER", "VIEWER"] as const;
 
@@ -10,7 +11,7 @@ const bodySchema = z.object({
   role: z.enum(assignableRoles),
 });
 
-type Ctx = { params: { memberId: string } };
+type Ctx = AppRouteCtx<{ memberId: string }>;
 
 /**
  * Change a member's org role (ADMIN / MANAGER / VIEWER only).
@@ -20,7 +21,8 @@ export async function PUT(req: NextRequest, ctx: Ctx) {
   const auth = await requireUserOrgRole(req, "ADMIN");
   if (!auth.ok) return auth.response;
 
-  const memberId = ctx.params.memberId?.trim();
+  const { memberId: rawMemberId } = await ctx.params;
+  const memberId = rawMemberId?.trim();
   if (!memberId) {
     return jsonError("Missing member id", 400);
   }

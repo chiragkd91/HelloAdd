@@ -11,6 +11,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { requireAgencyManager } from "@/lib/api/agencyGuard";
 import { jsonError, jsonOk } from "@/lib/api/http";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
 const featuresSchema = z.object({
   postScheduling: z.boolean().optional(),
@@ -44,13 +45,14 @@ const putSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
-type Ctx = { params: { id: string } };
+type Ctx = AppRouteCtx<{ id: string }>;
 
 export async function PUT(req: NextRequest, ctx: Ctx) {
   const auth = await requireAgencyManager(req);
   if (!auth.ok) return auth.response;
 
-  const id = ctx.params.id?.trim();
+  const { id: rawId } = await ctx.params;
+  const id = rawId?.trim();
   if (!id) return jsonError("Missing plan id", 400);
 
   let json: unknown;
@@ -113,7 +115,8 @@ export async function DELETE(req: NextRequest, ctx: Ctx) {
   const auth = await requireAgencyManager(req);
   if (!auth.ok) return auth.response;
 
-  const id = ctx.params.id?.trim();
+  const { id: rawId } = await ctx.params;
+  const id = rawId?.trim();
   if (!id) return jsonError("Missing plan id", 400);
 
   await connectMongo();

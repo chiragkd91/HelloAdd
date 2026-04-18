@@ -7,12 +7,13 @@ import { campaignsToCsv, loadCampaignRowsForReport } from "@/lib/reportArtifacts
 import { generateExcelReport } from "@/lib/reports/excelGenerator";
 import { loadDailyMetricsLast30Days, loadReportData } from "@/lib/reports/reportData";
 import { generatePDFReport, pdfAttachmentFilename, type PdfReportTemplate } from "@/lib/reports/pdfGenerator";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
 function filenameSafe(s: string) {
   return s.replace(/[^a-zA-Z0-9._-]+/g, "-").slice(0, 80);
 }
 
-type Ctx = { params: { id: string } };
+type Ctx = AppRouteCtx<{ id: string }>;
 
 export async function GET(req: NextRequest, ctx: Ctx) {
   const p = getClientPortalPayload(req);
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest, ctx: Ctx) {
     return jsonError("Forbidden", 403);
   }
 
-  const { id } = ctx.params;
+  const { id } = await ctx.params;
   const formatRaw = (url.searchParams.get("format") ?? "csv").toLowerCase();
   const format = formatRaw === "pdf" ? "pdf" : formatRaw === "xlsx" ? "xlsx" : "csv";
   const templateRaw = (url.searchParams.get("template") ?? "standard").toLowerCase();

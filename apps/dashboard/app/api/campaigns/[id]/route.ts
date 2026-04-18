@@ -4,6 +4,7 @@ import { z } from "zod";
 import { jsonError, jsonOk } from "@/lib/api/http";
 import { requireUserAndOrg } from "@/lib/api/guard";
 import { requireUserOrgRole } from "@/lib/auth/rbac";
+import type { AppRouteCtx } from "@/lib/api/routeContext";
 
 const patchSchema = z
   .object({
@@ -66,14 +67,15 @@ function serialize(c: {
   };
 }
 
-type Ctx = { params: { id: string } };
+type Ctx = AppRouteCtx<{ id: string }>;
 
 export async function GET(_req: NextRequest, ctx: Ctx) {
   const auth = await requireUserAndOrg(_req);
   if (!auth.ok) return auth.response;
 
+  const { id: campaignId } = await ctx.params;
   const c = await Campaign.findOne({
-    _id: ctx.params.id,
+    _id: campaignId,
     organizationId: auth.organizationId,
   }).lean();
 
@@ -88,6 +90,7 @@ export async function PUT(req: NextRequest, ctx: Ctx) {
   const auth = await requireUserOrgRole(req, "MANAGER");
   if (!auth.ok) return auth.response;
 
+  const { id: campaignId } = await ctx.params;
   let json: unknown;
   try {
     json = await req.json();
@@ -114,7 +117,7 @@ export async function PUT(req: NextRequest, ctx: Ctx) {
   }
 
   const c = await Campaign.findOneAndUpdate(
-    { _id: ctx.params.id, organizationId: auth.organizationId },
+    { _id: campaignId, organizationId: auth.organizationId },
     { $set: setDoc },
     { new: true }
   ).lean();
@@ -130,8 +133,9 @@ export async function DELETE(_req: NextRequest, ctx: Ctx) {
   const auth = await requireUserOrgRole(_req, "MANAGER");
   if (!auth.ok) return auth.response;
 
+  const { id: campaignId } = await ctx.params;
   const r = await Campaign.deleteOne({
-    _id: ctx.params.id,
+    _id: campaignId,
     organizationId: auth.organizationId,
   });
 
