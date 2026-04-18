@@ -1,6 +1,17 @@
 Hello Add — Linux deploy (PM2 + Next.js standalone)
 ==================================================
 
+Next.js version note
+--------------------
+`next.config.js` in `apps/web` and `apps/dashboard` detects the installed Next.js major
+version at build time. Next 14 uses `experimental.*` tracing keys + webpack externals for
+`node-cron` / `exceljs`. Next 15+ uses top-level `outputFileTracingRoot` and
+`serverExternalPackages` (no custom webpack block), which avoids Turbopack vs webpack conflicts
+on `next build`.
+
+Prefer `npm ci` with a committed `package-lock.json` so servers do not accidentally resolve a
+different Next major than your team tested.
+
 Build on your dev machine (or CI), then copy artifacts to the server.
 
 1) On the build machine (repo root: helloadd/)

@@ -1,19 +1,29 @@
 const path = require("path");
 
+const tracingRoot = path.join(__dirname, "../../");
+const nextMajor = parseInt(require("next/package.json").version.split(".")[0], 10);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  /** Minimal server bundle for Linux PM2 — copy `.next/standalone` + run `prepare-standalone` after build. */
   output: "standalone",
   transpilePackages: ["@helloadd/database"],
-  experimental: {
-    /** Trace workspace packages (`@helloadd/database`) from monorepo root. */
-    outputFileTracingRoot: path.join(__dirname, "../../"),
+};
+
+if (nextMajor >= 15) {
+  nextConfig.outputFileTracingRoot = tracingRoot;
+  nextConfig.serverExternalPackages = ["node-cron", "exceljs"];
+  nextConfig.experimental = {
+    optimizePackageImports: ["lucide-react", "recharts"],
+  };
+} else {
+  nextConfig.experimental = {
+    outputFileTracingRoot: tracingRoot,
     optimizePackageImports: ["lucide-react", "recharts"],
     instrumentationHook: true,
     serverComponentsExternalPackages: ["node-cron", "exceljs"],
-  },
-  webpack: (config, { isServer }) => {
+  };
+  nextConfig.webpack = (config, { isServer }) => {
     if (isServer) {
       config.externals = config.externals ?? [];
       if (Array.isArray(config.externals)) {
@@ -21,7 +31,7 @@ const nextConfig = {
       }
     }
     return config;
-  },
-};
+  };
+}
 
 module.exports = nextConfig;
