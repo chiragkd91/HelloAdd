@@ -50,6 +50,7 @@ Build on your dev machine (or CI), then copy artifacts to the server.
 4) Reverse proxy
    Point Nginx/Caddy to 127.0.0.1:3001 (dashboard) and :30002 (marketing web),
    or use two subdomains with TLS.
+   Example Nginx vhost: deploy/nginx/helloadd.conf.example (edit server_name + SSL).
 
 5) Re-deploy
    Re-run `npm run build:deploy` on the build machine, copy updated files,

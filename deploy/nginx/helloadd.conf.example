@@ -1,0 +1,66 @@
+# Hello Add — Nginx reverse proxy (copy and edit hostnames + SSL paths)
+#
+# 1. Copy:   sudo cp deploy/nginx/helloadd.conf.example /etc/nginx/sites-available/helloadd
+# 2. Edit:   replace example.com, app.example.com, and SSL paths (or use Certbot below)
+# 3. Enable: sudo ln -sf /etc/nginx/sites-available/helloadd /etc/nginx/sites-enabled/
+# 4. Test:   sudo nginx -t && sudo systemctl reload nginx
+#
+# PM2 defaults (ecosystem.config.cjs): dashboard 127.0.0.1:3001, marketing web :30002
+#
+# HTTPS with Let's Encrypt (after HTTP works):
+#   sudo apt install certbot python3-certbot-nginx
+#   sudo certbot --nginx -d example.com -d www.example.com -d app.example.com
+
+# ---- Redirect bare HTTP to HTTPS (uncomment after SSL is configured) ----
+# server {
+#     listen 80;
+#     listen [::]:80;
+#     server_name example.com www.example.com app.example.com;
+#     return 301 https://$host$request_uri;
+# }
+
+# ---- Marketing site (apps/web) ----
+server {
+    listen 80;
+    listen [::]:80;
+    server_name example.com www.example.com;
+
+    # After Certbot, add ssl_certificate lines here or let certbot patch this file.
+
+    client_max_body_size 25m;
+
+    location / {
+        proxy_pass http://127.0.0.1:30002;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 86400;
+    }
+}
+
+# ---- Dashboard app (apps/dashboard) ----
+server {
+    listen 80;
+    listen [::]:80;
+    server_name app.example.com;
+
+    client_max_body_size 25m;
+
+    location / {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 86400;
+    }
+}
