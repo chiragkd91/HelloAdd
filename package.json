@@ -1,0 +1,24 @@
+{
+  "name": "helloadd",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "build:deploy": "turbo build && node scripts/prepare-standalone.cjs",
+    "prepare:standalone": "node scripts/prepare-standalone.cjs",
+    "dev": "turbo dev",
+    "dev:web": "npm run dev --workspace=web",
+    "dev:dashboard": "npm run dev --workspace=dashboard",
+    "lint": "turbo lint",
+    "db:seed": "npm run db:seed --workspace=@helloadd/database",
+    "db:seed:demo-year": "npm run db:seed:demo-year --workspace=@helloadd/database"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  },
+  "packageManager": "npm@10.8.2"
+}

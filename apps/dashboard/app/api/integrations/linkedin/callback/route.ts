@@ -1,0 +1,153 @@
+import { connectMongo, Integration } from "@helloadd/database";
+import { NextRequest, NextResponse } from "next/server";
+import { exchangeLinkedInOAuthCode, getLinkedInAdAccounts, getLinkedInMemberUrn } from "@/lib/api/linkedin";
+import { assertAgencyOAuthGates } from "@/lib/agency/agencyPlanEnforcement";
+import { jsonDbUnavailable, jsonError } from "@/lib/api/http";
+import { isValidOAuthOrganizationId } from "@/lib/api/oauth-org-id";
+import { oauthErrorUrl, oauthSuccessUrl } from "@/lib/api/oauth-redirect";
+import { decodeState } from "@/lib/api/oauth-stub";
+import { syncOrganization } from "@/lib/sync/syncEngine";
+
+export async function GET(req: NextRequest) {
+  try {
+    await connectMongo();
+  } catch (e) {
+    return jsonDbUnavailable(e);
+  }
+
+  const { searchParams } = new URL(req.url);
+  const oauthError = searchParams.get("error");
+  const code = searchParams.get("code");
+  const state = decodeState(searchParams.get("state"));
+
+  if (oauthError) {
+    const errUrl = new URL("/integrations", req.nextUrl.origin);
+    errUrl.searchParams.set("error", "linkedin_denied");
+    const res = NextResponse.redirect(errUrl);
+    res.cookies.delete("oauth_csrf");
+    return res;
+  }
+
+  if (!code || !state) {
+    return jsonError("Missing code or invalid state", 400);
+  }
+
+  // CSRF verification — token must match the httpOnly cookie set at OAuth start
+  const csrfCookie = req.cookies.get("oauth_csrf")?.value;
+  if (!csrfCookie || csrfCookie !== state.csrf) {
+    return jsonError("Invalid OAuth state", 400);
+  }
+
+  if (!isValidOAuthOrganizationId(state.organizationId)) {
+    return jsonError("Invalid state", 400);
+  }
+  if (state.provider !== "linkedin" || state.platform !== "LINKEDIN") {
+    return jsonError("Invalid OAuth state provider/platform", 400);
+  }
+
+  // Burn the CSRF cookie on every redirect response from this point on
+  function redirect(url: URL | string): NextResponse {
+    const res = NextResponse.redirect(url);
+    res.cookies.delete("oauth_csrf");
+    return res;
+  }
+
+  const redirectUri = new URL("/api/integrations/linkedin/callback", req.nextUrl.origin).toString();
+  const successUrl = oauthSuccessUrl(req, state, "linkedin");
+
+  const agencyGate = await assertAgencyOAuthGates(state.organizationId, "LINKEDIN", "linkedin");
+  if (agencyGate) {
+    return redirect(oauthErrorUrl(req, state, agencyGate));
+  }
+
+  if (code === "demo_oauth_code") {
+    await Integration.findOneAndUpdate(
+      { organizationId: state.organizationId, platform: state.platform },
+      {
+        $set: {
+          organizationId: state.organizationId,
+          platform: state.platform,
+          accessToken: `oauth_stub_${code}`,
+          refreshToken: null,
+          tokenExpiresAt: null,
+          accountId: `li_${state.organizationId.slice(0, 8)}`,
+          accountName: "LinkedIn (stub)",
+          metadata: {
+            adAccountId: `li_${state.organizationId.slice(0, 8)}`,
+            adAccountUrn: null,
+            authorUrn: `urn:li:person:stub-${state.organizationId.slice(0, 8)}`,
+            authorType: "PERSON",
+          },
+          isActive: true,
+          connectedAt: new Date(),
+        },
+      },
+      { upsert: true }
+    );
+    return redirect(successUrl);
+  }
+
+  if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
+    return jsonError("LinkedIn OAuth is not configured (LINKEDIN_CLIENT_ID / LINKEDIN_CLIENT_SECRET)", 500);
+  }
+
+  try {
+    const tokens = await exchangeLinkedInOAuthCode(code, redirectUri);
+    let accountId = `li_${state.organizationId.slice(0, 8)}`;
+    let accountName = "LinkedIn Campaign Manager";
+    let adAccountUrn: string | null = null;
+
+    try {
+      const accounts = await getLinkedInAdAccounts(tokens.accessToken);
+      const first = accounts[0];
+      if (first) {
+        accountId = first.id;
+        adAccountUrn = first.urn ?? null;
+        accountName = first.name ? `LinkedIn (${first.name})` : `LinkedIn (${first.id})`;
+      }
+    } catch {
+      accountName = "LinkedIn (connected — could not list ad accounts; check scopes / API version)";
+    }
+
+    const authorUrn = await getLinkedInMemberUrn(tokens.accessToken);
+
+    const doc = await Integration.findOneAndUpdate(
+      { organizationId: state.organizationId, platform: state.platform },
+      {
+        $set: {
+          organizationId: state.organizationId,
+          platform: state.platform,
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          tokenExpiresAt: tokens.expiresAt,
+          accountId,
+          accountName,
+          metadata: {
+            adAccountId: accountId,
+            adAccountUrn,
+            authorUrn,
+            authorType: authorUrn ? "PERSON" : null,
+          },
+          isActive: true,
+          connectedAt: new Date(),
+        },
+      },
+      { new: true, upsert: true }
+    ).lean();
+
+    if (!doc) {
+      return jsonError("Failed to save integration", 500);
+    }
+
+    void syncOrganization(state.organizationId).catch((e) => {
+      console.error("[linkedin/callback] initial sync failed:", e);
+    });
+
+    return redirect(successUrl);
+  } catch (e) {
+    console.error("[linkedin/callback] OAuth error:", e);
+    const errUrl = new URL("/integrations", req.nextUrl.origin);
+    errUrl.searchParams.set("error", "linkedin_oauth");
+    return redirect(errUrl);
+  }
+}

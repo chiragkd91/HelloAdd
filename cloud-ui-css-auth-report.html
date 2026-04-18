@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Cloud UI Audit Report</title>
+  <style>
+    body { font-family: Inter, Arial, sans-serif; margin: 24px; line-height: 1.45; color: #111827; }
+    h1, h2 { margin: 0 0 10px; }
+    h1 { font-size: 28px; }
+    h2 { font-size: 18px; margin-top: 28px; }
+    .muted { color: #6b7280; }
+    .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .high { background: #fee2e2; color: #991b1b; }
+    .med { background: #fef3c7; color: #92400e; }
+    .low { background: #dcfce7; color: #166534; }
+    table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+    th, td { border: 1px solid #e5e7eb; padding: 8px 10px; text-align: left; font-size: 13px; }
+    th { background: #f9fafb; }
+    code { background: #f3f4f6; padding: 1px 5px; border-radius: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; background: #fff; }
+    .k { font-size: 12px; color: #6b7280; }
+    .v { font-size: 22px; font-weight: 700; }
+    ul { margin: 8px 0 0 18px; }
+  </style>
+</head>
+<body>
+  <h1>Cloud UI + CSS + Business Login Audit</h1>
+  <p class="muted">Generated: 2026-04-16T13:52:06.591Z<br/>Project: helloadd/apps/dashboard</p>
+  <p>Overall risk: <span class="pill high">High</span></p>
+  <div class="grid">
+    <div class="card"><div class="k">UI files scanned</div><div class="v">71</div></div>
+    <div class="card"><div class="k">API routes scanned</div><div class="v">87</div></div>
+    <div class="card"><div class="k">Potential UI/CSS issues</div><div class="v">143</div></div>
+    <div class="card"><div class="k">Potential auth gaps</div><div class="v">0</div></div>
+  </div>
+
+  <h2>Issue Counts</h2>
+  <table>
+    <tr><th>Category</th><th>Count</th><th>What to fix</th></tr>
+    <tr><td>Inline style usage</td><td>34</td><td>Move repeated style objects into design tokens/classes.</td></tr>
+    <tr><td>Hardcoded color literals</td><td>70</td><td>Use theme variables to avoid inconsistent UI color behavior.</td></tr>
+    <tr><td>Table usage</td><td>15</td><td>Ensure responsive wrappers and header semantics on every table.</td></tr>
+    <tr><td>Image tags missing alt</td><td>0</td><td>Add meaningful <code>alt</code> text.</td></tr>
+    <tr><td>Low-contrast text class risk</td><td>0</td><td>Review readability against background (WCAG AA).</td></tr>
+    <tr><td>Fixed px sizing</td><td>39</td><td>Prefer fluid or breakpoint-aware sizing.</td></tr>
+    <tr><td>Routes without business-login/auth guard</td><td>0</td><td>Add role/session guard unless route is intentionally public.</td></tr>
+  </table>
+
+  <h2>Top Files: Inline Styles</h2>
+  <table>
+    <tr><th>File</th><th>Count</th></tr>
+    <tr><td><code>apps/dashboard/app/(dashboard)/settings/page.tsx</code></td><td>7</td></tr><tr><td><code>apps/dashboard/components/clientPortal/ClientPortalChrome.tsx</code></td><td>6</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/calendar/page.tsx</code></td><td>3</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/agency/clients/new/page.tsx</code></td><td>2</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/budget/page.tsx</code></td><td>2</td></tr><tr><td><code>apps/dashboard/components/agency/AgencyPlanEditorModal.tsx</code></td><td>2</td></tr><tr><td><code>apps/dashboard/components/dashboard/CampaignCalendar.tsx</code></td><td>2</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/agency/clients/[id]/integrations/page.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/agency/plans/page.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/analytics/page.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/campaigns/page.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/campaigns/[id]/page.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/integrations/page.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/scheduler/create/page.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/components/dashboard/CampaignTable.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/components/dashboard/EngagementDonut.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/components/dashboard/RegionPerformance.tsx</code></td><td>1</td></tr>
+  </table>
+
+  <h2>Top Files: Hardcoded Colors</h2>
+  <table>
+    <tr><th>File</th><th>Count</th></tr>
+    <tr><td><code>apps/dashboard/app/(dashboard)/settings/page.tsx</code></td><td>25</td></tr><tr><td><code>apps/dashboard/components/clientPortal/ClientPortalChrome.tsx</code></td><td>10</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/scheduler/create/page.tsx</code></td><td>8</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/integrations/page.tsx</code></td><td>7</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/analytics/page.tsx</code></td><td>5</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/budget/page.tsx</code></td><td>4</td></tr><tr><td><code>apps/dashboard/components/dashboard/CTRChart.tsx</code></td><td>4</td></tr><tr><td><code>apps/dashboard/components/dashboard/SpendChart.tsx</code></td><td>4</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/reports/page.tsx</code></td><td>2</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/calendar/page.tsx</code></td><td>1</td></tr>
+  </table>
+
+  <h2>Table Components Found</h2>
+  <table>
+    <tr><th>File</th><th>Count</th></tr>
+    <tr><td><code>apps/dashboard/app/(dashboard)/agency/clients/[id]/page.tsx</code></td><td>4</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/agency/billing/page.tsx</code></td><td>2</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/agency/page.tsx</code></td><td>2</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/campaigns/page.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/scheduler/page.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/scheduler/[id]/page.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/app/(dashboard)/team/page.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/components/dashboard/CampaignTable.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/components/settings/BillingSettings.tsx</code></td><td>1</td></tr><tr><td><code>apps/dashboard/components/ui/Table.tsx</code></td><td>1</td></tr>
+  </table>
+
+  <h2>Business Login/Auth Guard Gaps</h2>
+  <p>No obvious auth guard gaps found by static check.</p>
+
+  <h2>Recommended Fix Order</h2>
+  <ol>
+    <li>Fix auth guard gaps first (security + data exposure).</li>
+    <li>Fix contrast and missing alt text (accessibility).</li>
+    <li>Replace hardcoded colors and inline styles with theme tokens/components.</li>
+    <li>Normalize card/table responsiveness on small screens.</li>
+  </ol>
+  <p class="muted">Note: This is a static automated audit. Dynamic visual bugs need browser walkthrough testing.</p>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "@helloadd/database",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./enums": "./src/enums.ts",
+    "./agency-plan-types": "./src/agencyPlanTypes.ts"
+  },
+  "scripts": {
+    "db:seed": "tsx scripts/seed.ts",
+    "db:seed:demo-year": "cross-env SEED_DEMO_YEAR=1 tsx scripts/seed.ts"
+  },
+  "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
+    "mongoose": "^8.9.5"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

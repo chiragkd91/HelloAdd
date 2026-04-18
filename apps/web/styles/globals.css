@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Global base styles — single source of truth with Tailwind theme.
+ * Marketing UI uses neutral + unified brand primary (#6845ab, matches dashboard);
+ * legacy plum/olive tokens remain in tailwind.config for gradual migration.
+ */
+@layer base {
+  :root {
+    --color-primary: #6845ab;
+    --color-hero: #0a0a0a;
+  }
+
+  html {
+    @apply scroll-smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply min-h-screen bg-white font-sans text-base leading-relaxed text-neutral-900;
+  }
+
+  ::selection {
+    @apply bg-primary/20 text-neutral-900;
+  }
+}
+
+/** Prefer instant scroll when user requests reduced motion (Framer Motion: add useReducedMotion in components later). */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/** Fine grid overlay (hero / dark sections) — Nue-like depth without heavy assets */
+@layer utilities {
+  .bg-grid-fine {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(ellipse 85% 65% at 50% 0%, black 20%, transparent 72%);
+  }
+
+  .text-balance-safe {
+    text-wrap: balance;
+  }
+}

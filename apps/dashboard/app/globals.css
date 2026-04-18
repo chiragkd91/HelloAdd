@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #6845ab;
+  }
+
+  html {
+    @apply scroll-smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply min-h-screen bg-neutral-100 font-sans text-base leading-relaxed text-neutral-900 antialiased;
+  }
+}
+
+/* Route content: quick fade/slide when switching dashboard pages */
+@keyframes ha-route-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ha-route-enter {
+  animation: ha-route-in 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ha-route-enter {
+    animation: none;
+  }
+}
+
+/* Loading skeleton pulse */
+@keyframes ha-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.ha-skeleton {
+  @apply rounded-xl bg-neutral-200/90;
+  animation: ha-pulse 1.1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ha-skeleton {
+    animation: none;
+    @apply opacity-70;
+  }
+}
