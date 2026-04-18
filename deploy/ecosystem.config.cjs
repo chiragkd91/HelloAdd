@@ -7,7 +7,7 @@
  *   pm2 save && pm2 startup
  *
  * HELLOADD_ROOT must be the repo root where `apps/dashboard/.next/standalone/...` exists
- * (copy the whole monorepo tree, or at least apps/*/ with standalone output + packages if needed).
+ * (copy the whole monorepo tree, or at least each app under `apps/` with standalone output).
  */
 const path = require("path");
 
