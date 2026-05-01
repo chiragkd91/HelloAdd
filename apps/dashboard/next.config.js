@@ -8,6 +8,12 @@ const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
   transpilePackages: ["@helloadd/database"],
+  async redirects() {
+    return [
+      { source: "/Login", destination: "/login", permanent: true },
+      { source: "/Register", destination: "/register", permanent: true },
+    ];
+  },
 };
 
 if (nextMajor >= 15) {
