@@ -11,6 +11,7 @@ import {
   type Severity,
 } from "@helloadd/database";
 import { getAIErrorExplanation } from "@/lib/ai/errorExplainer";
+import { dashboardPublicBaseUrl } from "@/lib/auth/dashboardBaseUrl";
 import { sendCampaignAlertEmail } from "@/lib/email/sendAlertEmail";
 import { getDigestRecipientEmail } from "@/lib/email/weeklyDigestData";
 import { sendWhatsAppAlert } from "@/lib/notifications/whatsapp";
@@ -193,9 +194,7 @@ async function notifyCriticalEmailIfConfigured(
     const to = await getDigestRecipientEmail(organizationId);
     if (!to) return;
 
-    const baseUrl =
-      process.env.NEXT_PUBLIC_DASHBOARD_URL ?? process.env.NEXTAUTH_URL ?? "http://localhost:3001";
-    const dashboardUrl = `${baseUrl.replace(/\/$/, "")}/`;
+    const dashboardUrl = `${dashboardPublicBaseUrl()}/`;
 
     await sendCampaignAlertEmail(to, {
       orgName: org?.name ?? "Your organization",

@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { jsonError, jsonOk } from "@/lib/api/http";
+import { dashboardPublicBaseUrl } from "@/lib/auth/dashboardBaseUrl";
 import { requireUserOrgRole } from "@/lib/auth/rbac";
 import { generatePDFReport, pdfAttachmentFilename } from "@/lib/reports/pdfGenerator";
 import { loadReportData } from "@/lib/reports/reportData";
@@ -49,9 +50,6 @@ export async function POST(req: NextRequest) {
   const user = owner ? await User.findById(owner.userId).lean() : null;
   const firstName = user?.name?.split(/\s+/)[0] ?? "there";
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_DASHBOARD_URL ?? process.env.NEXTAUTH_URL ?? "http://localhost:3001";
-
   await sendReportEmail({
     to,
     subject: `Hello Add — Test report — ${org.name}`,
@@ -65,7 +63,7 @@ export async function POST(req: NextRequest) {
         conversions: data.metrics.totalConversions,
       },
       topPlatform: data.platformBreakdown[0]?.platform ?? "—",
-      dashboardUrl: `${baseUrl.replace(/\/$/, "")}/`,
+      dashboardUrl: `${dashboardPublicBaseUrl()}/`,
     }),
     pdfBytes: pdf,
     filename: pdfAttachmentFilename(data, "standard"),

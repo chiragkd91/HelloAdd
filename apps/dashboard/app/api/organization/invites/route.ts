@@ -12,6 +12,7 @@ import { enforceAgencyTeamInviteLimit } from "@/lib/agency/agencyPlanEnforcement
 import { jsonDbUnavailable, jsonError, jsonOk } from "@/lib/api/http";
 import { requireUserOrgRole } from "@/lib/auth/rbac";
 import { sendInviteEmail } from "@/lib/email/sendInviteEmail";
+import { dashboardPublicBaseUrl } from "@/lib/auth/dashboardBaseUrl";
 import { generateInviteSecret, hashInviteToken } from "@/lib/organization/inviteToken";
 
 function inviteRoleLabel(role: string): string {
@@ -36,8 +37,8 @@ function dashboardOrigin(req: NextRequest): string {
   const env = process.env.NEXT_PUBLIC_DASHBOARD_URL?.trim();
   if (env) return env.replace(/\/$/, "");
   const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
-  const proto = req.headers.get("x-forwarded-proto") ?? "http";
-  return host ? `${proto}://${host}` : "http://localhost:3001";
+  const proto = req.headers.get("x-forwarded-proto") ?? "https";
+  return host ? `${proto}://${host}` : dashboardPublicBaseUrl();
 }
 
 /** List pending invites for the workspace. */

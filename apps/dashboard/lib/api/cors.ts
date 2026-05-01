@@ -1,3 +1,4 @@
+import { DEFAULT_PUBLIC_MARKETING_ORIGIN } from "@helloadd/public-origins";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
@@ -5,7 +6,7 @@ import { NextResponse } from "next/server";
 export function marketingOrigin(): string {
   const raw = process.env.NEXT_PUBLIC_MARKETING_URL?.trim();
   if (raw) return raw.replace(/\/$/, "");
-  return "http://localhost:30002";
+  return DEFAULT_PUBLIC_MARKETING_ORIGIN;
 }
 
 export function applyMarketingCors(req: NextRequest, res: NextResponse): NextResponse {

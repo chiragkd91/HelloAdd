@@ -6,6 +6,7 @@ import {
   Report,
   User,
 } from "@helloadd/database";
+import { dashboardPublicBaseUrl } from "@/lib/auth/dashboardBaseUrl";
 import { sendWeeklyDigestEmail } from "@/lib/email/sendAlertEmail";
 import { buildWeeklyDigestData, getDigestRecipientEmail } from "@/lib/email/weeklyDigestData";
 import { generatePDFReport, pdfAttachmentFilename } from "@/lib/reports/pdfGenerator";
@@ -68,9 +69,7 @@ export async function generateAndSendReport(
   const user = owner ? await User.findById(owner.userId).lean() : null;
   const firstName = user?.name?.split(/\s+/)[0] ?? "there";
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_DASHBOARD_URL ?? process.env.NEXTAUTH_URL ?? "http://localhost:3001";
-  const dashboardUrl = `${baseUrl.replace(/\/$/, "")}/`;
+  const dashboardUrl = `${dashboardPublicBaseUrl()}/`;
 
   const subject =
     reportType === "WEEKLY_SUMMARY"

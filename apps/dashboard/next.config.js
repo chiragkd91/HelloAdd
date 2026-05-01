@@ -7,7 +7,7 @@ const nextMajor = parseInt(require("next/package.json").version.split(".")[0], 1
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
-  transpilePackages: ["@helloadd/database"],
+  transpilePackages: ["@helloadd/database", "@helloadd/public-origins"],
   async redirects() {
     return [
       { source: "/Login", destination: "/login", permanent: true },

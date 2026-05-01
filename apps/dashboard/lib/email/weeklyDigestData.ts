@@ -1,4 +1,5 @@
 import { Alert, Organization, OrganizationMember, User, connectMongo } from "@helloadd/database";
+import { dashboardPublicBaseUrl } from "@/lib/auth/dashboardBaseUrl";
 import { platformLabel } from "@/lib/campaignDisplay";
 import type { WeeklyDigestData } from "@/lib/email/sendAlertEmail";
 import { loadReportData } from "@/lib/reports/reportData";
@@ -54,9 +55,7 @@ export async function buildWeeklyDigestData(organizationId: string): Promise<Wee
     }),
   ]);
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_DASHBOARD_URL ?? process.env.NEXTAUTH_URL ?? "http://localhost:3001";
-  const dashboardUrl = `${baseUrl.replace(/\/$/, "")}/`;
+  const dashboardUrl = `${dashboardPublicBaseUrl()}/`;
 
   return {
     orgName: report.organizationName,

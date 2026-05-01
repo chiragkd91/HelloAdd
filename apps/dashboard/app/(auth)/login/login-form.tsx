@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/components/auth/AuthProvider";
+import { DEFAULT_PUBLIC_MARKETING_ORIGIN } from "@helloadd/public-origins";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -8,7 +9,7 @@ import { useState } from "react";
 const marketingSiteUrl =
   typeof process.env.NEXT_PUBLIC_MARKETING_URL === "string" && process.env.NEXT_PUBLIC_MARKETING_URL.length > 0
     ? process.env.NEXT_PUBLIC_MARKETING_URL
-    : "http://localhost:30002";
+    : DEFAULT_PUBLIC_MARKETING_ORIGIN;
 
 export function LoginForm() {
   const router = useRouter();
