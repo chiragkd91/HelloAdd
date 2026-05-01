@@ -4,6 +4,7 @@ import { useState } from "react";
 import { authInputClass, authLabelClass } from "@/components/auth/authStyles";
 import { Button } from "@/components/ui/Button";
 import { DASHBOARD_API } from "@/lib/dashboardApi";
+import { dashboardAuthNonJsonMessage, parseDashboardAuthJson } from "@/lib/dashboardAuthResponse";
 
 export function ForgotPasswordForm() {
   const [error, setError] = useState("");
@@ -22,7 +23,12 @@ export function ForgotPasswordForm() {
         credentials: "include",
         body: JSON.stringify({ email }),
       });
-      const data = (await r.json()) as { error?: string; message?: string };
+      const data = await parseDashboardAuthJson<{ error?: string; message?: string }>(r);
+      if (data === null) {
+        setError(dashboardAuthNonJsonMessage(r));
+        setPending(false);
+        return;
+      }
       if (!r.ok) {
         setError(data.error ?? "Request failed.");
         setPending(false);
@@ -30,7 +36,9 @@ export function ForgotPasswordForm() {
       }
       setDone(true);
     } catch {
-      setError("Network error — check that the dashboard is running and try again.");
+      setError(
+        "Could not reach the sign-in service (browser blocked the request or the connection failed). After a deploy, wait for the dashboard to restart; then hard-refresh this page.",
+      );
     } finally {
       setPending(false);
     }

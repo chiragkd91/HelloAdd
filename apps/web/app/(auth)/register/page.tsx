@@ -9,6 +9,7 @@ import type { Plan } from "@/components/auth/planTypes";
 import { PlanSelector } from "@/components/auth/PlanSelector";
 import { Button } from "@/components/ui/Button";
 import { DASHBOARD_API } from "@/lib/dashboardApi";
+import { dashboardAuthNonJsonMessage, parseDashboardAuthJson } from "@/lib/dashboardAuthResponse";
 
 export default function RegisterPage() {
   const [plan, setPlan] = useState<Plan>("GROWTH");
@@ -70,11 +71,13 @@ export default function RegisterPage() {
         credentials: "include",
         body: JSON.stringify(payload),
       });
-      const data = (await r.json()) as {
-        error?: string;
-        requiresEmailVerification?: boolean;
-        email?: string;
-      };
+      type RegJson = { error?: string; requiresEmailVerification?: boolean; email?: string };
+      const data = await parseDashboardAuthJson<RegJson>(r);
+      if (data === null) {
+        setError(dashboardAuthNonJsonMessage(r));
+        setPending(false);
+        return;
+      }
       if (!r.ok) {
         setError(data.error ?? "Registration failed.");
         setPending(false);
@@ -87,7 +90,9 @@ export default function RegisterPage() {
       }
       window.location.assign(`${DASHBOARD_API}/`);
     } catch {
-      setError("Network error — check that the dashboard is running and try again.");
+      setError(
+        "Could not reach the sign-in service (browser blocked the request or the connection failed). After a deploy, wait for the dashboard to restart; then hard-refresh this page.",
+      );
       setPending(false);
     }
   }

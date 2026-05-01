@@ -7,6 +7,7 @@ import { authInputClass, authLabelClass } from "@/components/auth/authStyles";
 import { GoogleOAuthButton } from "@/components/auth/GoogleOAuthButton";
 import { Button } from "@/components/ui/Button";
 import { DASHBOARD_API } from "@/lib/dashboardApi";
+import { dashboardAuthNonJsonMessage, parseDashboardAuthJson } from "@/lib/dashboardAuthResponse";
 
 export function LoginForm() {
   const [error, setError] = useState("");
@@ -27,7 +28,12 @@ export function LoginForm() {
         credentials: "include",
         body: JSON.stringify({ email, password }),
       });
-      const data = (await r.json()) as { error?: string };
+      const data = await parseDashboardAuthJson<{ error?: string }>(r);
+      if (data === null) {
+        setError(dashboardAuthNonJsonMessage(r));
+        setPending(false);
+        return;
+      }
       if (!r.ok) {
         setError(data.error ?? "Sign-in failed.");
         setPending(false);
@@ -35,7 +41,9 @@ export function LoginForm() {
       }
       window.location.assign(`${DASHBOARD_API}/`);
     } catch {
-      setError("Network error — check that the dashboard is running and try again.");
+      setError(
+        "Could not reach the sign-in service (browser blocked the request or the connection failed). After a deploy, wait for the dashboard to restart; then hard-refresh this page.",
+      );
       setPending(false);
     }
   }

@@ -6,3 +6,9 @@
  */
 export const DEFAULT_PUBLIC_DASHBOARD_ORIGIN = "https://app.helloadd.online";
 export const DEFAULT_PUBLIC_MARKETING_ORIGIN = "https://helloadd.online";
+
+/** Canonical `www` marketing host — include in CORS allowlist alongside non-www. */
+export const DEFAULT_PUBLIC_MARKETING_ORIGIN_WWW = "https://www.helloadd.online";
+
+/** Local marketing dev server (apps/web `next dev` default port). */
+export const DEFAULT_LOCAL_MARKETING_ORIGIN = "http://localhost:30002";
