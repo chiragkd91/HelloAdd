@@ -1,5 +1,3 @@
-import nodemailer from "nodemailer";
-
 /** True when Gmail (or compatible SMTP) credentials are present. */
 export function isGmailSmtpConfigured(): boolean {
   const u = process.env.GMAIL_SMTP_USER?.trim();
@@ -7,10 +5,7 @@ export function isGmailSmtpConfigured(): boolean {
   return Boolean(u && p);
 }
 
-/**
- * Send HTML email via SMTP (defaults to Gmail: smtp.gmail.com:465).
- * Use a Google [App Password](https://support.google.com/accounts/answer/185833), not your normal Gmail password.
- */
+/** Send HTML via SMTP (default Gmail). App password, not your Gmail login password. */
 export async function sendHtmlViaSmtp(opts: {
   to: string;
   from: string;
@@ -27,6 +22,7 @@ export async function sendHtmlViaSmtp(opts: {
   const secure = port === 465;
 
   try {
+    const nodemailer = (await import("nodemailer")).default;
     const transport = nodemailer.createTransport({
       host,
       port,

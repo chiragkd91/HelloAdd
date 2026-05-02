@@ -8,6 +8,8 @@ const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
   transpilePackages: ["@helloadd/database", "@helloadd/public-origins"],
+  /** Avoid CI/server build failures when ESLint versions differ from dev. */
+  eslint: { ignoreDuringBuilds: true },
   async redirects() {
     return [
       { source: "/Login", destination: "/login", permanent: true },
