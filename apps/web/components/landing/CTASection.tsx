@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { DASHBOARD_REGISTER_URL } from "@/lib/dashboardApi";
 import { motion } from "framer-motion";
 
 export function CTASection() {
@@ -30,7 +31,7 @@ export function CTASection() {
           </p>
           <div className="mt-10 flex justify-center">
             <Link
-              href="/register"
+              href={DASHBOARD_REGISTER_URL}
               className="inline-flex min-h-[52px] min-w-[200px] items-center justify-center rounded-2xl bg-white px-10 py-3.5 text-base font-bold text-primary shadow-xl transition-colors hover:bg-fog focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Take me in

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ButtonLink } from "@/components/ui/Button";
+import { DASHBOARD_LOGIN_URL, DASHBOARD_REGISTER_URL } from "@/lib/dashboardApi";
 
 const links = [
   { href: "/features", label: "Features" },
@@ -65,7 +66,7 @@ export function Navbar() {
         </ul>
         <div className="flex items-center gap-2 sm:gap-3">
           <ButtonLink
-            href="/login"
+            href={DASHBOARD_LOGIN_URL}
             variant="ghost"
             className="px-3 text-sm font-semibold text-neutral-700 hover:text-dark"
             target="_blank"
@@ -76,7 +77,7 @@ export function Navbar() {
             <span className="sr-only">(opens in new tab)</span>
           </ButtonLink>
           <ButtonLink
-            href="/register"
+            href={DASHBOARD_REGISTER_URL}
             variant="primary"
             className="hidden px-4 py-2 text-xs shadow-md shadow-primary/15 sm:inline-flex sm:text-sm"
           >
@@ -120,7 +121,7 @@ export function Navbar() {
             </ul>
             <div className="flex flex-col gap-2 border-t border-neutral-100 px-6 pb-5 pt-3">
               <ButtonLink
-                href="/login"
+                href={DASHBOARD_LOGIN_URL}
                 variant="ghost"
                 className="w-full justify-center py-2.5 text-sm"
                 target="_blank"
@@ -132,7 +133,7 @@ export function Navbar() {
                 <span className="sr-only">(opens in new tab)</span>
               </ButtonLink>
               <ButtonLink
-                href="/register"
+                href={DASHBOARD_REGISTER_URL}
                 variant="primary"
                 className="w-full justify-center py-2.5 text-sm"
                 onClick={() => setMenuOpen(false)}

@@ -188,7 +188,10 @@ export async function POST(req: NextRequest) {
   const emailSent = await sendVerificationEmail(emailNorm, verifyUrl);
 
   if (!emailSent) {
-    console.info("[Hello Add] Verification link (set RESEND_API_KEY to send email):", verifyUrl);
+    console.info(
+      "[Hello Add] Verification link (set GMAIL_SMTP_USER + GMAIL_SMTP_APP_PASSWORD or RESEND_API_KEY to send email):",
+      verifyUrl,
+    );
     if (process.env.NODE_ENV === "production") {
       await OrganizationMember.deleteMany({ organizationId: org._id });
       await Organization.deleteOne({ _id: org._id });

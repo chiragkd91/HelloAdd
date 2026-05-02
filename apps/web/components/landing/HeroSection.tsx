@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ButtonLink } from "@/components/ui/Button";
+import { DASHBOARD_REGISTER_URL } from "@/lib/dashboardApi";
 import { DashboardMockup } from "@/components/landing/DashboardMockup";
 
 const platforms = [
@@ -49,7 +50,7 @@ export function HeroSection() {
               Built because we got tired of logging into 10 tools ourselves.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-              <ButtonLink href="/register" variant="primary" className="px-8 py-3.5 text-base">
+              <ButtonLink href={DASHBOARD_REGISTER_URL} variant="primary" className="px-8 py-3.5 text-base">
                 Try it free
               </ButtonLink>
               <ButtonLink href="#demo" variant="heroGhostLight" className="px-8 py-3.5 text-base">

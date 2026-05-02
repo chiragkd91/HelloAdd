@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
 import { ButtonLink } from "@/components/ui/Button";
+import { DASHBOARD_REGISTER_URL } from "@/lib/dashboardApi";
 import { Card } from "@/components/ui/Card";
 
 const plans = [
@@ -195,14 +196,14 @@ export function PricingPageContent() {
                   </ul>
                   {p.popular ? (
                     <Link
-                      href="/register"
+                      href={DASHBOARD_REGISTER_URL}
                       className="mt-auto inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-bold text-primary shadow-[0_4px_14px_rgba(0,0,0,0.08)] ring-1 ring-neutral-200/80 transition-colors hover:bg-neutral-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       Start free trial
                     </Link>
                   ) : (
                     <ButtonLink
-                      href="/register"
+                      href={DASHBOARD_REGISTER_URL}
                       variant="primary"
                       className="mt-auto min-h-[48px] w-full justify-center py-3"
                     >

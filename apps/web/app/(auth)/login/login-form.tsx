@@ -6,7 +6,7 @@ import { AuthDivider } from "@/components/auth/AuthDivider";
 import { authInputClass, authLabelClass } from "@/components/auth/authStyles";
 import { GoogleOAuthButton } from "@/components/auth/GoogleOAuthButton";
 import { Button } from "@/components/ui/Button";
-import { DASHBOARD_API } from "@/lib/dashboardApi";
+import { DASHBOARD_API, DASHBOARD_REGISTER_URL } from "@/lib/dashboardApi";
 import { dashboardAuthNonJsonMessage, parseDashboardAuthJson } from "@/lib/dashboardAuthResponse";
 
 export function LoginForm() {
@@ -106,7 +106,7 @@ export function LoginForm() {
 
       <p className="mt-8 text-center text-sm text-neutral-600">
         Don&apos;t have an account?{" "}
-        <Link href="/register" className="font-bold text-primary hover:underline">
+        <Link href={DASHBOARD_REGISTER_URL} className="font-bold text-primary hover:underline">
           Start free trial
         </Link>
       </p>

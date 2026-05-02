@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { DASHBOARD_REGISTER_URL } from "@/lib/dashboardApi";
 import { motion } from "framer-motion";
 
 type Story = {
@@ -173,7 +174,7 @@ export function CaseStudiesContent() {
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm font-semibold">
             <Link
-              href="/register"
+              href={DASHBOARD_REGISTER_URL}
               className="rounded-btn bg-primary px-6 py-2.5 text-primary-foreground shadow-sm transition hover:bg-primary-hover"
             >
               Start free trial

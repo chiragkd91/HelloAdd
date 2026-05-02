@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ButtonLink } from "@/components/ui/Button";
+import { DASHBOARD_REGISTER_URL } from "@/lib/dashboardApi";
 import { Card } from "@/components/ui/Card";
 
 const plans = [
@@ -105,13 +106,13 @@ export function PricingSection() {
                 <p className="mt-6 flex-1 text-sm text-neutral-600">{p.detail}</p>
                 {p.popular ? (
                   <Link
-                    href="/register"
+                    href={DASHBOARD_REGISTER_URL}
                     className="mt-10 inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-bold text-primary shadow-[0_4px_14px_rgba(0,0,0,0.08)] ring-1 ring-neutral-200/80 transition-colors hover:bg-fog focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     Start free trial
                   </Link>
                 ) : (
-                  <ButtonLink href="/register" variant="primary" className="mt-10 w-full justify-center">
+                  <ButtonLink href={DASHBOARD_REGISTER_URL} variant="primary" className="mt-10 w-full justify-center">
                     Start free trial
                   </ButtonLink>
                 )}

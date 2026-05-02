@@ -18,7 +18,7 @@ const nextConfig = {
 
 if (nextMajor >= 15) {
   nextConfig.outputFileTracingRoot = tracingRoot;
-  nextConfig.serverExternalPackages = ["node-cron", "exceljs"];
+  nextConfig.serverExternalPackages = ["node-cron", "exceljs", "nodemailer"];
   nextConfig.experimental = {
     optimizePackageImports: ["lucide-react", "recharts"],
   };
@@ -27,13 +27,13 @@ if (nextMajor >= 15) {
     outputFileTracingRoot: tracingRoot,
     optimizePackageImports: ["lucide-react", "recharts"],
     instrumentationHook: true,
-    serverComponentsExternalPackages: ["node-cron", "exceljs"],
+    serverComponentsExternalPackages: ["node-cron", "exceljs", "nodemailer"],
   };
   nextConfig.webpack = (config, { isServer }) => {
     if (isServer) {
       config.externals = config.externals ?? [];
       if (Array.isArray(config.externals)) {
-        config.externals.push("node-cron", "exceljs");
+        config.externals.push("node-cron", "exceljs", "nodemailer");
       }
     }
     return config;

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
+import { DASHBOARD_REGISTER_URL } from "@/lib/dashboardApi";
 import { Navbar } from "@/components/layout/Navbar";
 import { pageMetadata } from "@/lib/seo";
 
@@ -32,7 +33,7 @@ export default function ContactPage() {
           </p>
         </div>
         <p className="mt-10 flex flex-wrap gap-4 text-sm">
-          <Link href="/register" className="font-semibold text-primary hover:underline">
+          <Link href={DASHBOARD_REGISTER_URL} className="font-semibold text-primary hover:underline">
             Start free trial
           </Link>
           <span className="text-neutral-300">·</span>

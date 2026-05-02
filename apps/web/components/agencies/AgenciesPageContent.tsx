@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { DASHBOARD_REGISTER_URL } from "@/lib/dashboardApi";
 import { motion } from "framer-motion";
 
 function reveal(i: number) {
@@ -220,7 +221,7 @@ export function AgenciesPageContent() {
           >
             See Agency pricing
           </Link>
-          <Link href="/register" className="text-sm font-semibold text-primary hover:underline">
+          <Link href={DASHBOARD_REGISTER_URL} className="text-sm font-semibold text-primary hover:underline">
             Start free trial →
           </Link>
           <Link href="/features" className="text-sm font-medium text-neutral-600 hover:text-primary">

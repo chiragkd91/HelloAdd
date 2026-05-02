@@ -8,7 +8,7 @@ import { authInputClass, authLabelClass } from "@/components/auth/authStyles";
 import type { Plan } from "@/components/auth/planTypes";
 import { PlanSelector } from "@/components/auth/PlanSelector";
 import { Button } from "@/components/ui/Button";
-import { DASHBOARD_API } from "@/lib/dashboardApi";
+import { DASHBOARD_API, DASHBOARD_LOGIN_URL } from "@/lib/dashboardApi";
 import { dashboardAuthNonJsonMessage, parseDashboardAuthJson } from "@/lib/dashboardAuthResponse";
 
 export default function RegisterPage() {
@@ -156,7 +156,7 @@ export default function RegisterPage() {
                   {resendBusy ? "Sending…" : "Resend verification email"}
                 </button>
                 <p className="pt-2 text-sm text-neutral-600">
-                  <Link href="/login" className="font-semibold text-primary hover:underline">
+                  <Link href={DASHBOARD_LOGIN_URL} className="font-semibold text-primary hover:underline">
                     Go to log in
                   </Link>
                 </p>
@@ -260,7 +260,7 @@ export default function RegisterPage() {
 
             <p className="mt-8 text-center text-sm text-neutral-600">
               Already have an account?{" "}
-              <Link href="/login" className="font-bold text-primary hover:underline">
+              <Link href={DASHBOARD_LOGIN_URL} className="font-bold text-primary hover:underline">
                 Log in
               </Link>
             </p>

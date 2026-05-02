@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout";
+import { DASHBOARD_LOGIN_URL } from "@/lib/dashboardApi";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { pageMetadata } from "@/lib/seo";
@@ -28,7 +29,7 @@ export default function ForgotPasswordPage() {
             </p>
             <ForgotPasswordForm />
             <p className="mt-8 text-center text-sm text-neutral-600">
-              <Link href="/login" className="font-semibold text-primary hover:underline">
+              <Link href={DASHBOARD_LOGIN_URL} className="font-semibold text-primary hover:underline">
                 ← Back to log in
               </Link>
             </p>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
+import { DASHBOARD_REGISTER_URL } from "@/lib/dashboardApi";
 import { Navbar } from "@/components/layout/Navbar";
 import { pageMetadata } from "@/lib/seo";
 
@@ -115,7 +116,7 @@ export default function AboutPage() {
           <div className="mx-auto max-w-3xl px-6 py-10 text-center md:py-12">
             <p className="text-base text-neutral-700 md:text-lg">
               Want to talk? Reach us through your Hello Add workspace, or start from the{" "}
-              <Link href="/register" className="font-semibold text-primary underline decoration-primary/35 underline-offset-4 hover:decoration-primary">
+              <Link href={DASHBOARD_REGISTER_URL} className="font-semibold text-primary underline decoration-primary/35 underline-offset-4 hover:decoration-primary">
                 trial
               </Link>{" "}
               and break things.
